@@ -1,0 +1,16 @@
+version: 2
+registries:
+  github-nuget:
+    type: nuget-feed
+    url: https://nuget.pkg.github.com/genkan-software/index.json
+    token: ${{secrets.PACKAGES_TOKEN}}     # add it under Settings > Secrets > Dependabot
+updates:
+  - package-ecosystem: nuget
+    directories: ["/src/*"]
+    registries: [github-nuget]
+    schedule: { interval: weekly }
+    allow:
+      - dependency-name: "Genkan.Shared"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
