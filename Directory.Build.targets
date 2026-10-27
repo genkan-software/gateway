@@ -1,0 +1,17 @@
+<Project>
+  <!--
+    Dev convenience: when this repo is checked out as a submodule of genkan-setup (so ../shared exists),
+    Genkan.Shared is taken from that local source instead of the published NuGet package. Edit Shared, run the service, done.
+    Standalone checkout, CI and docker build (no ../shared) keep using the package, so nothing changes there.
+      opt out:   dotnet build -p:UseLocalShared=false
+      other path: dotnet build -p:GenkanSharedProject=/path/to/Genkan.Shared.csproj
+  -->
+  <PropertyGroup>
+    <GenkanSharedProject Condition="'$(GenkanSharedProject)' == ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'shared', 'src', 'Genkan.Shared', 'Genkan.Shared.csproj'))</GenkanSharedProject>
+    <UseLocalShared Condition="'$(UseLocalShared)' == '' And Exists('$(GenkanSharedProject)')">true</UseLocalShared>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseLocalShared)' == 'true'">
+    <PackageReference Remove="Genkan.Shared" />
+    <ProjectReference Include="$(GenkanSharedProject)" />
+  </ItemGroup>
+</Project>
